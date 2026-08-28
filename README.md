@@ -6,9 +6,18 @@ The SR-71 Blackbird captured its footage at Mach 3 — higher and faster than an
 
 Editing video comes down to a handful of moves you repeat all the time: tight cuts, punchy on-screen subtitles, clean audio. It should work just as well for **vertical** clips (Shorts, Reels) as for **regular landscape** video. Today most people pay a monthly subscription to a web tool for exactly those few things. Blackbird is the opposite: **free, local, and yours**.
 
-## Why build this?
+## Why I'm building this
 
-- The core edits are simple and repetitive — they shouldn't cost a recurring subscription.
+I'm a content creator, and honestly? I'm tired of paying a monthly subscription for every single tool. Editing, subtitles, audio cleanup — everything is SaaS now, and the bills pile up. It's exhausting, and it hits hardest exactly when you're a **small creator** who can't really afford to spend.
+
+So Blackbird exists for two reasons:
+
+1. **To have something free for myself** — my own editor, no subscription, running on my own machine.
+2. **To give back to open source** — sharing it so other creators can edit **completely free**, and together we can stop renting the basics.
+
+The rest follows from that:
+
+- The core edits are simple and repetitive — they shouldn't cost a recurring fee.
 - Makers should **own** the tools they use every day.
 - **Local-first:** your footage never leaves your machine.
 - Editing software can feel **calm and precise**, not cluttered and noisy.
