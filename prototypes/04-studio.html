@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio — Shorts Editor prototype</title>
+<style>
+  :root{
+    --bg:#101216;--pane:#171a20;--pane-2:#1c2027;--head:#20242c;--line:#2a2f39;--line-2:#363c48;
+    --text:#d6dae2;--muted:#868da0;--faint:#5b6172;
+    --accent:#e0873c;--accent-2:#4a90d9;--accent-dim:rgba(224,135,60,.15);--green:#5cc98f;
+    --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;-webkit-font-smoothing:antialiased}
+  .viewport{min-height:100vh;display:grid;place-items:center;padding:18px;overflow:auto}
+  .app{width:min(1400px,100%);min-width:1140px;height:min(820px,calc(100vh - 36px));min-height:660px;
+    display:grid;grid-template-columns:288px 1fr 262px;grid-template-rows:34px 1fr 236px;
+    grid-template-areas:"title title title" "left stage right" "tl tl tl";gap:2px;
+    background:var(--line);border:1px solid var(--line-2);border-radius:6px;overflow:hidden}
+  .app>*{background:var(--pane)}
+  .titlebar{grid-area:title;display:flex;align-items:center;gap:16px;padding:0 12px;background:var(--head);font-size:12.5px}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:600}
+  .brand .m{width:15px;height:15px;border-radius:3px;background:var(--accent)}
+  .menu{display:flex;gap:15px;color:var(--muted);font-size:12px}
+  .menu span{cursor:pointer}.menu span:hover{color:var(--text)}
+  .project{margin-inline:auto;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .tb-right{display:flex;align-items:center;gap:14px}
+  .btn-export{font-size:12px;font-weight:600;color:#160d04;background:var(--accent);border:none;border-radius:4px;padding:6px 13px;cursor:pointer}
+  .btn-export:hover{background:#eda155}
+  .wctl{color:var(--faint);letter-spacing:2px;font-size:12px}
+  .tabs{display:flex;gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+  .tabs button{flex:1;font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--pane);border:none;padding:8px;cursor:pointer;border-top:2px solid transparent}
+  .tabs button.on{color:var(--text);border-top-color:var(--accent);background:var(--pane-2)}
+  .left{grid-area:left;display:flex;flex-direction:column;min-height:0}
+  .media{flex:1;min-height:0;display:flex;flex-direction:column;padding:12px;gap:10px}
+  .mrow{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow:auto}
+  .cell{position:relative;aspect-ratio:16/10;border-radius:4px;overflow:hidden;border:1px solid var(--line);cursor:pointer}
+  .cell:hover{border-color:var(--line-2)}
+  .cell.sel{border-color:var(--accent);outline:1px solid var(--accent)}
+  .cell .dur{position:absolute;right:4px;bottom:4px;font-family:var(--mono);font-size:9px;background:rgba(0,0,0,.55);padding:1px 4px;border-radius:3px;color:#dfe2ea}
+  .g1{background:linear-gradient(135deg,#3a2f5e,#6d5a9e)}.g2{background:linear-gradient(135deg,#1f4d54,#3d8f8a)}.g3{background:linear-gradient(135deg,#5a3a2a,#a4703f)}.g4{background:linear-gradient(135deg,#2f3d5e,#5a79b8)}.g5{background:linear-gradient(135deg,#4a3b26,#997a45)}.g6{background:linear-gradient(135deg,#2c2c42,#4a4a6d)}
+  .dl{padding:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+  .field,.select{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .select .v{color:var(--accent)}
+  .dl-btn{background:var(--pane-2);border:1px solid var(--line-2);color:var(--text);border-radius:4px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
+  .dl-btn:hover{background:var(--accent-dim);border-color:var(--accent)}
+  .status{font-family:var(--mono);font-size:10px;color:var(--faint)}.status .ok{color:var(--green)}
+  .stage{grid-area:stage;display:flex;flex-direction:column;min-height:0;background:#0c0e11}
+  .stage-top{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--head);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .stage-top .r{display:flex;gap:8px}
+  .stage-top .r i{border:1px solid var(--line);border-radius:3px;padding:2px 7px;color:var(--muted);cursor:pointer}
+  .stage-top .r i:hover{color:var(--text)}
+  .stage-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;min-height:0}
+  .frame{position:relative;aspect-ratio:9/16;height:min(100%,470px);border-radius:4px;overflow:hidden;border:1px solid #2b2f38;background:radial-gradient(120% 60% at 50% 0%,#4b3a72,transparent 60%),radial-gradient(120% 70% at 50% 100%,#1c2b4d,transparent 55%),linear-gradient(180deg,#2a2140,#12203a);box-shadow:0 20px 50px -24px #000}
+  .frame .scene{position:absolute;inset:0;background:radial-gradient(60% 40% at 30% 28%,rgba(224,135,60,.30),transparent 60%),radial-gradient(50% 40% at 74% 62%,rgba(74,144,217,.30),transparent 60%);mix-blend-mode:screen}
+  .frame .subs{position:absolute;left:0;right:0;bottom:56px;text-align:center;padding:0 16px;font-weight:800;font-size:22px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+  .frame .subs .w{opacity:.82}.frame .subs .hot{color:#160d04;background:var(--accent);border-radius:5px;padding:1px 8px}
+  .frame .safe{position:absolute;inset:7%;border:1px dashed rgba(255,255,255,.14);border-radius:3px;pointer-events:none}
+  .transport{display:flex;align-items:center;gap:14px;color:var(--muted)}
+  .transport .play{width:38px;height:38px;border-radius:4px;background:var(--accent);border:none;display:grid;place-items:center;cursor:pointer}
+  .transport .s{cursor:pointer;display:grid;place-items:center}
+  .tc{font-family:var(--mono);font-size:12px;color:var(--text);font-variant-numeric:tabular-nums}
+  .tc .d{color:var(--muted)}
+  .right{grid-area:right;display:flex;flex-direction:column;min-height:0}
+  .insp{flex:1;overflow:auto}
+  .grp{padding:14px 12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:11px}
+  .grp .h{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:2px;gap:2px}
+  .seg button{flex:1;font-family:var(--font);font-size:11.5px;font-weight:600;color:var(--muted);background:transparent;border:none;border-radius:3px;padding:6px;cursor:pointer}
+  .seg button.on{color:#160d04;background:var(--accent)}
+  .row{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+  .row .lab{color:var(--muted)}.row .val{font-family:var(--mono);font-size:11px;color:var(--text)}
+  .slider{height:4px;border-radius:2px;background:var(--line-2);position:relative}
+  .slider .fill{position:absolute;left:0;top:0;bottom:0;width:62%;border-radius:2px;background:var(--accent)}
+  .slider .knob{position:absolute;left:62%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:var(--text);border:2px solid var(--pane)}
+  .sw-row{display:flex;justify-content:space-between;align-items:center}
+  .sw-row .n{font-size:12.5px;font-weight:600}.sw-row .u{font-size:10px;color:var(--faint);font-family:var(--mono);margin-top:2px}
+  .switch{width:40px;height:22px;border-radius:99px;background:var(--green);position:relative;cursor:pointer}
+  .switch::after{content:"";position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+  .fx{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .fx button{font-family:var(--font);font-size:11.5px;color:var(--muted);border:1px solid var(--line);background:var(--bg);border-radius:4px;padding:7px;cursor:pointer;text-align:left}
+  .fx button:hover{color:var(--text)}
+  .fx button.on{color:var(--accent);border-color:var(--accent);background:var(--accent-dim)}
+  .timeline{grid-area:tl;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  .tl-bar{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--head);border-bottom:1px solid var(--line)}
+  .tl-bar i{width:28px;height:24px;border:1px solid var(--line);border-radius:3px;display:grid;place-items:center;color:var(--muted);cursor:pointer;font-size:12px}
+  .tl-bar i:hover{color:var(--text)}.tl-bar i.on{color:#160d04;background:var(--accent);border-color:var(--accent)}
+  .tl-bar .sp{flex:1}
+  .tl-bar .zoom{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .tl-body{flex:1;display:flex;min-height:0}
+  .tl-heads{width:70px;flex:none;border-right:1px solid var(--line);display:flex;flex-direction:column}
+  .tl-heads .rh{height:22px;border-bottom:1px solid var(--line);background:var(--head)}
+  .tl-heads .th{flex:1;display:flex;align-items:center;gap:6px;padding:0 8px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+  .tl-heads .th .d{width:7px;height:7px;border-radius:2px;background:var(--accent-2)}
+  .tl-heads .th.a .d{background:var(--green)}.tl-heads .th.s .d{background:var(--accent)}
+  .tl-lanes{flex:1;display:flex;flex-direction:column;min-width:0;position:relative}
+  .ruler{height:22px;display:flex;align-items:flex-end;padding:0 8px 3px;border-bottom:1px solid var(--line);background:var(--pane-2)}
+  .ruler .tick{flex:1;font-family:var(--mono);font-size:9.5px;color:var(--faint)}
+  .lane{flex:1;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:4px;padding:4px 8px;overflow:hidden}
+  .clip{height:calc(100% - 8px);border-radius:3px;display:flex;align-items:flex-end;padding:4px 7px;font-family:var(--mono);font-size:10px;color:#eef0fb;cursor:pointer;border:1px solid rgba(255,255,255,.1);overflow:hidden}
+  .clip.sel{outline:2px solid var(--accent);outline-offset:-1px}
+  .clip.c1{flex:0 0 30%;background:linear-gradient(135deg,#3a2f5e,#6d5a9e)}.clip.c2{flex:0 0 42%;background:linear-gradient(135deg,#1f4d54,#3d8f8a)}.clip.c3{flex:0 0 24%;background:linear-gradient(135deg,#5a3a2a,#a4703f)}
+  .wave{width:100%;height:100%;display:block}
+  .subclip{height:calc(100% - 10px);border-radius:3px;background:rgba(224,135,60,.14);border:1px solid rgba(224,135,60,.4);display:flex;align-items:center;padding:0 8px;font-family:var(--mono);font-size:9.5px;color:#f2c99a;white-space:nowrap;overflow:hidden}
+  .subclip+.subclip{margin-left:4px}
+  .playhead{position:absolute;top:0;bottom:0;left:31.5%;width:1.5px;background:var(--accent);z-index:5}
+  .playhead::before{content:"";position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:9px;height:9px;background:var(--accent);clip-path:polygon(50% 100%,0 0,100% 0)}
+  .hint{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .hint a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="viewport">
+  <div class="app">
+    <header class="titlebar">
+      <div class="brand"><span class="m"></span>editor</div>
+      <nav class="menu"><span>Archivo</span><span>Editar</span><span>Clip</span><span>Ver</span></nav>
+      <div class="project">mi-short-otoño.proj — 1080×1920 · 30fps</div>
+      <div class="tb-right"><button class="btn-export">Exportar 9:16</button><span class="wctl">– ▢ ✕</span></div>
+    </header>
+
+    <aside class="left">
+      <div class="tabs"><button class="on">Medios</button><button>Efectos</button><button>Audio</button></div>
+      <section class="media">
+        <div class="mrow"><span>Proyecto · 6 clips</span><span>▤ ▦</span></div>
+        <div class="grid">
+          <div class="cell g1"><span class="dur">0:12</span></div>
+          <div class="cell g2 sel"><span class="dur">0:34</span></div>
+          <div class="cell g3"><span class="dur">0:08</span></div>
+          <div class="cell g4"><span class="dur">1:02</span></div>
+          <div class="cell g5"><span class="dur">0:19</span></div>
+          <div class="cell g6"><span class="dur">0:47</span></div>
+        </div>
+      </section>
+      <section class="dl">
+        <div class="mrow">Descargar de YouTube</div>
+        <div class="field"><span>pega una URL…</span></div>
+        <div class="select"><span>Formato</span><span class="v">1080p·vp9·60</span></div>
+        <button class="dl-btn">Descargar al proyecto</button>
+        <div class="status"><span class="ok">●</span> yt-dlp al día · hace 3 días</div>
+      </section>
+    </aside>
+
+    <main class="stage">
+      <div class="stage-top"><span>Vista previa</span><div class="r"><i>Ajustar</i><i>100%</i><i>⊞ seguro</i></div></div>
+      <div class="stage-body">
+        <div class="frame"><div class="scene"></div><div class="safe"></div><div class="subs"><span class="w">hoy te enseño algo</span> <span class="hot">BRUTAL</span></div></div>
+        <div class="transport">
+          <span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 5v14l-9-7zM6 5h2v14H6z"/></svg></span>
+          <button class="play"><svg width="16" height="16" viewBox="0 0 24 24" fill="#160d04"><path d="M8 5v14l11-7z"/></svg></button>
+          <span class="s"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 5v14l9-7zM16 5h2v14h-2z"/></svg></span>
+          <span class="tc">00:04<span class="d"> / 00:15</span></span>
+        </div>
+      </div>
+    </main>
+
+    <aside class="right">
+      <div class="insp">
+        <section class="grp">
+          <div class="h">Subtítulos</div>
+          <div class="seg"><button class="on">Karaoke</button><button>Bloque</button></div>
+          <div class="row"><span class="lab">Fuente</span><span class="val">Inter Tight 800</span></div>
+          <div class="row"><span class="lab">Tamaño</span><span class="val">42 px</span></div>
+          <div class="slider"><div class="fill"></div><div class="knob"></div></div>
+        </section>
+        <section class="grp">
+          <div class="h">Audio</div>
+          <div class="sw-row"><div><div class="n">Mejorar audio</div><div class="u">reducción de ruido</div></div><div class="switch"></div></div>
+          <div class="row"><span class="lab">Nivel</span><span class="val">–18 dB</span></div>
+        </section>
+        <section class="grp">
+          <div class="h">Efectos</div>
+          <div class="fx"><button class="on">Zoom</button><button>Desenfoque</button><button>Nitidez</button><button>Transición</button></div>
+        </section>
+      </div>
+    </aside>
+
+    <footer class="timeline">
+      <div class="tl-bar"><i class="on">▸</i><i>✂</i><i>✋</i><i>⌕</i><span class="sp"></span><span class="zoom">— ▬▬●▬ +</span></div>
+      <div class="tl-body">
+        <div class="tl-heads">
+          <div class="rh"></div>
+          <div class="th"><span class="d"></span>V1</div>
+          <div class="th a"><span class="d"></span>A1</div>
+          <div class="th s"><span class="d"></span>SUB</div>
+        </div>
+        <div class="tl-lanes">
+          <div class="ruler"><span class="tick">0:00</span><span class="tick">0:03</span><span class="tick">0:06</span><span class="tick">0:09</span><span class="tick">0:12</span><span class="tick">0:15</span></div>
+          <div class="lane"><div class="clip c1">intro</div><div class="clip c2 sel">plano-a</div><div class="clip c3">cierre</div></div>
+          <div class="lane"><canvas class="wave" id="wave"></canvas></div>
+          <div class="lane"><div class="subclip">hoy te enseño…</div><div class="subclip">algo BRUTAL</div><div class="subclip">dale like</div></div>
+          <div class="playhead"></div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+<div class="hint">studio · maqueta estática — <a href="../index.html">ver otras versiones</a></div>
+<script>
+  const cv=document.getElementById('wave');
+  function draw(){const dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();cv.width=r.width*dpr;cv.height=r.height*dpr;const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,r.width,r.height);ctx.fillStyle='#5cc98f';const mid=r.height/2,bw=2,gap=1,n=Math.floor(r.width/(bw+gap));for(let i=0;i<n;i++){const t=i/n;const env=Math.sin(t*Math.PI);const h=(0.15+0.85*Math.abs(Math.sin(i*0.7)*Math.cos(i*0.23)+Math.sin(i*0.11)))*env*(r.height*0.82);const x=i*(bw+gap)+2;ctx.globalAlpha=.5+.5*env;ctx.fillRect(x,mid-h/2,bw,Math.max(h,1));}}
+  draw();window.addEventListener('resize',draw);
+</script>
+</body>
+</html>

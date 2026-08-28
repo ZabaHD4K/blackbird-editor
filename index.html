@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shorts Editor — interface prototypes</title>
+<style>
+  :root{
+    --bg:#0e0e14; --card:#16161f; --line:rgba(255,255,255,.08);
+    --text:#e6e7f0; --muted:#9498b4; --faint:#606484;
+    --accent:linear-gradient(135deg,#cba6f7,#89b4fa 55%,#94e2d5);
+    --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+    radial-gradient(60% 50% at 15% 0%,rgba(203,166,247,.10),transparent 60%),
+    radial-gradient(50% 50% at 90% 100%,rgba(148,226,213,.09),transparent 60%),
+    var(--bg);
+    color:var(--text);font-family:var(--font);min-height:100vh;
+    -webkit-font-smoothing:antialiased;line-height:1.55}
+  .wrap{max-width:1040px;margin:0 auto;padding:72px 24px 96px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 16px}
+  h1{font-size:clamp(30px,5vw,50px);line-height:1.05;letter-spacing:-.02em;margin:0 0 18px;text-wrap:balance;font-weight:680}
+  h1 .g{background:var(--accent);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{font-size:18px;color:var(--muted);max-width:60ch;margin:0 0 10px}
+  .note{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin-top:22px;display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);padding:7px 13px;border-radius:99px}
+  .note .dot{width:7px;height:7px;border-radius:50%;background:#a6e3a1;box-shadow:0 0 10px #a6e3a1}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:44px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}}
+  a.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;
+    background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+  a.card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16);box-shadow:0 20px 50px -24px rgba(0,0,0,.7)}
+  .prev{height:150px;position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .p-aurora{background:
+    radial-gradient(60% 80% at 20% 10%,rgba(203,166,247,.55),transparent 60%),
+    radial-gradient(60% 80% at 90% 100%,rgba(148,226,213,.5),transparent 60%),
+    linear-gradient(160deg,#20203050,#12121c)}
+  .p-minimal{background:#0d0d10;display:grid;place-items:center}
+  .p-minimal::after{content:"";width:64%;height:54%;border:1px solid rgba(255,255,255,.14);border-radius:8px;box-shadow:0 0 0 6px rgba(255,255,255,.02)}
+  .p-terminal{background:#070a07;font-family:var(--mono);color:#37f5a0;font-size:11px;padding:12px;white-space:pre;line-height:1.35;overflow:hidden}
+  .p-studio{background:repeating-linear-gradient(90deg,#1a1c22,#1a1c22 2px,#15171c 2px,#15171c 60px),#15171c;position:relative}
+  .p-studio::after{content:"";position:absolute;left:12%;top:30%;width:24%;height:40%;background:#e08a3c;border-radius:3px;box-shadow:34% 0 0 #4a8ec2, 70% 0 0 #6d5a9e}
+  .meta{padding:16px 18px 18px}
+  .meta h3{margin:0 0 4px;font-size:17px;letter-spacing:-.01em}
+  .meta p{margin:0;color:var(--muted);font-size:13.5px}
+  .meta .idx{font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .foot{margin-top:60px;color:var(--faint);font-size:13px}
+  .foot a{color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">Shorts Editor · working title</p>
+    <h1>An editor for short-form video<br>that's <span class="g">yours to own</span>.</h1>
+    <p class="lead">Tight cuts, punchy subtitles, clean audio — the essentials, done well, running on your own machine. No subscription.</p>
+    <p class="lead">We're designing the interface first. Below are four visual directions. Pick the one that feels right — or mix them.</p>
+    <span class="note"><span class="dot"></span>static prototypes · not functional yet</span>
+
+    <div class="grid">
+      <a class="card" href="prototypes/01-aurora.html">
+        <div class="prev p-aurora"></div>
+        <div class="meta"><span class="idx">01</span><h3>Aurora</h3><p>Soft, glassy, colorful. Translucent panels and a calm, riced-desktop mood.</p></div>
+      </a>
+      <a class="card" href="prototypes/02-minimal.html">
+        <div class="prev p-minimal"></div>
+        <div class="meta"><span class="idx">02</span><h3>Minimal</h3><p>Quiet and restrained. Hairlines, one accent, and a lot of breathing room.</p></div>
+      </a>
+      <a class="card" href="prototypes/03-terminal.html">
+        <div class="prev p-terminal">┌─ MEDIA ─────┐
+│ ▓▓ ▓▓ ▓▓ ▓▓ │
+│ clip_01.mp4 │
+└─────────────┘
+> subtitles: on_
+timeline ▓▓▓░░▓▓░</div>
+        <div class="meta"><span class="idx">03</span><h3>Terminal</h3><p>Monospace, TUI-inspired. Box-drawing, phosphor accents, keyboard-first.</p></div>
+      </a>
+      <a class="card" href="prototypes/04-studio.html">
+        <div class="prev p-studio"></div>
+        <div class="meta"><span class="idx">04</span><h3>Studio</h3><p>Dense and pro. Tool-first layout with more on screen, like a desktop NLE.</p></div>
+      </a>
+    </div>
+
+    <p class="foot">A design exploration by <a href="https://github.com/ZabaHD4K">Alejandro Zabaleta</a>. Everything here is a work in progress.</p>
+  </div>
+</body>
+</html>
