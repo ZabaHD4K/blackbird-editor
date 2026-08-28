@@ -1,17 +1,17 @@
-# Shorts Editor — *(working title)*
+# Blackbird 🖤✈️ — *(working title)*
 
-> An open-source, local-first video editor built for short-form vertical video.
+> An open-source, local-first video editor. Codename **Blackbird**, after the SR-71.
 
-Short-form video — Shorts, Reels, TikTok — comes down to a handful of edits you do over and over: tight cuts, punchy on-screen subtitles, and clean, clear audio. Today most creators pay a monthly subscription to a web tool to do exactly those few things.
+The SR-71 Blackbird captured its footage at Mach 3 — higher and faster than anything could reach. This is an editor in that spirit: bring your material in, cut it clean, and get out — all on your own machine.
 
-This project is an experiment to build a small, fast, good-looking editor that does those essentials really well — and that **you own**. No subscription, runs on your own machine, yours to shape.
+Editing video comes down to a handful of moves you repeat all the time: tight cuts, punchy on-screen subtitles, clean audio. It should work just as well for **vertical** clips (Shorts, Reels) as for **regular landscape** video. Today most people pay a monthly subscription to a web tool for exactly those few things. Blackbird is the opposite: **free, local, and yours**.
 
 ## Why build this?
 
-- The core edits for short-form video are simple and repetitive — they shouldn't cost a recurring subscription.
-- Makers should be able to **own** the tools they use every day.
-- **Local-first:** your footage stays on your machine.
-- Editing software can feel **calm and beautiful**, not cluttered and noisy.
+- The core edits are simple and repetitive — they shouldn't cost a recurring subscription.
+- Makers should **own** the tools they use every day.
+- **Local-first:** your footage never leaves your machine.
+- Editing software can feel **calm and precise**, not cluttered and noisy.
 
 ## Status
 
@@ -28,7 +28,7 @@ Open the prototypes and tell us which direction feels right. Each is one screen,
 | **Terminal** | monospace, TUI-inspired | [`prototypes/03-terminal.html`](prototypes/03-terminal.html) |
 | **Studio** | dense, pro, tool-first | [`prototypes/04-studio.html`](prototypes/04-studio.html) |
 
-> 🌐 If GitHub Pages is enabled, you can view them live from the [project page](https://zabahd4k.github.io/shorts-editor/).
+> 🌐 View them live from the [project page](https://zabahd4k.github.io/blackbird-editor/).
 
 ## Feedback
 
